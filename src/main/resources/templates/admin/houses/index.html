@@ -38,7 +38,14 @@
 
 						<h1 class="mb-4 text-center">民宿一覧</h1>
 
-						<div class="d-flex justify-content-end">
+						<div class="d-flex justify-content-between align-items-end flex-wrap">
+							<form method="get" th:action="@{/admin/houses}" class="mb-3">
+								<div class="input-group">
+									<input type="text" class="form-control" name="keyword" th:value="${keyword}"
+										placeholder="民宿名">
+									<button type="submit" class="btn text-white shadow-sm moattravel3-btn">検索</button>
+								</div>
+							</form>
 							<a href="#" class="btn text-white shadow-sm mb-3 moattravel3-btn">登録</a>
 						</div>
 
@@ -54,7 +61,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr th:each="house : ${houses}">
+								<tr th:each="house : ${housePage}">
 									<td th:text="${house.getId()}"></td>
 									<td th:text="${house.getName()}"></td>
 									<td th:text="${house.getPostalCode()}"></td>
@@ -64,6 +71,33 @@
 								</tr>
 							</tbody>
 						</table>
+						<!-- ページネーション -->
+						<div th:if="${housePage.getTotalPages() > 1}" class="d-flex justify-content-center">
+							<nav aria-label="民宿一覧ページ">
+								<ul class="pagination">
+									<li class="page-item">
+										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
+										<a th:unless="${housePage.isFirst()}"
+											th:href="@{/admin/houses(page = ${housePage.getNumber() - 1})}"
+											class="page-link moattravel3-page-link">前</a>
+									</li>
+									<li th:each="i : ${#numbers.sequence(0, housePage.getTotalPages() - 1)}"
+										class="page-item">
+										<span th:if="${i == housePage.getNumber()}"
+											class="page-link active moattravel3-active" th:text="${i + 1}"></span>
+										<a th:unless="${i == housePage.getNumber()}"
+											th:href="@{/admin/houses(page = ${i})}"
+											class="page-link moattravel3-page-link" th:text="${i + 1}"></a>
+									</li>
+									<li class="page-item">
+										<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
+										<a th:unless="${housePage.isLast()}"
+											th:href="@{/admin/houses(page = ${housePage.getNumber() + 1})}"
+											class="page-link moattravel3-page-link">次</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
 					</div>
 				</div>
 			</div>

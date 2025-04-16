@@ -49,6 +49,20 @@ h1 {
    opacity: 0.8;   
  }
  
+ .moattravel3-page-link {
+   color: #5196a6;
+ }
+ 
+ .moattravel3-page-link:hover {
+   color: #407784;
+ }
+ 
+ .moattravel3-active {
+   background-color: #5196a6 !important;
+   border-color: #5196a6 !important;
+ }
+
+ 
  @media screen and (min-width: 1400px) {
    .moattravel3-container {
      max-width: 1200px;
