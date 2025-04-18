@@ -69,6 +69,22 @@ footer {
 	white-space: pre-wrap;
 }
 
+.moattravel3-link-danger {
+	color: #f2594b;
+}
+
+.moattravel3-link-danger:hover {
+	color: #a63c3c;
+}
+
+.moattravel3-btn-danger {
+	background-color: #f2594b !important;
+	transition: 0.1s;
+}
+
+.moattravel3-btn-danger:hover {
+	opacity: 0.8;
+}
 
 @media screen and (min-width: 1400px) {
 	.moattravel3-container {

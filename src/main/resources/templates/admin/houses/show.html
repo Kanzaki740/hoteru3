@@ -8,7 +8,7 @@
 	<!-- Google Fonts -->
 	<div th:replace="~{fragment :: styles}"></div>
 
-	<title>民宿詳細</title>
+	<title th:text="'民宿詳細｜' + ${house.name}">民宿詳細</title>
 	<link rel="icon" type="image/ico" href="/images/favicon.ico">
 </head>
 
