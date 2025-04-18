@@ -3,28 +3,32 @@
 
 <head>
 	<div th:replace="~{fragment :: meta}"></div>
+
 	<div th:replace="~{fragment :: styles}"></div>
 
-	<title>Moat Travel</title>
+	<title>メール認証</title>
 	<link rel="icon" type="image/ico" href="/images/favicon.ico">
 </head>
 
 <body>
-	<div class="moattravel3-wrapper">
+	<div class="moattravel-wrapper">
 		<!-- ヘッダー -->
 		<div th:replace="~{fragment :: header}"></div>
 
 		<main>
 			<div class="container pt-4 pb-5 moattravel3-container">
-				<div th:if="${param.loggedIn}" class="alert alert-info">
-					ログインしました。
-				</div>
+				<div class="row justify-content-center">
+					<div class="col-xl-5 col-lg-6 col-md-8">
 
-				<div th:if="${param.loggedOut}" class="alert alert-info">
-					ログアウトしました。
-				</div>
-				<div th:if="${successMessage}" class="alert alert-info">
-					<span th:text="${successMessage}"></span>
+						<div th:if="${successMessage}" class="alert alert-info">
+							<span th:text="${successMessage}"></span>
+						</div>
+
+						<div th:if="${errorMessage}" class="alert alert-danger">
+							<span th:text="${errorMessage}"></span>
+						</div>
+
+					</div>
 				</div>
 			</div>
 		</main>

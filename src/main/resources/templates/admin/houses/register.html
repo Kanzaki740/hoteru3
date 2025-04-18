@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" 　>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<div th:replace="~{fragment :: meta}"></div>
@@ -47,7 +47,7 @@
 								<div class="col-md-8">
 									<div th:if="${#fields.hasErrors('imageFile')}" class="text-danger small mb-2"
 										th:errors="*{imageFile}"></div>
-									<input type="file" class="form-control" th:field="*{imageFile}">
+									<input type="file" class="form-control" th:field="*{imageFiles}">
 								</div>
 							</div>
 

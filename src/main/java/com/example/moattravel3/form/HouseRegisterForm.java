@@ -1,4 +1,5 @@
 package com.example.moattravel3.form;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.Min;
@@ -11,7 +12,7 @@ public class HouseRegisterForm {
      private String name;
          
      private MultipartFile imageFile;
-     
+
      @NotBlank(message = "説明を入力してください。")
      private String description;   
      
