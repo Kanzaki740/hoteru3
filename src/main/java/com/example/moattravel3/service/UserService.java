@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.moattravel3.entity.Role;
 import com.example.moattravel3.entity.User;
 import com.example.moattravel3.form.SignupForm;
+import com.example.moattravel3.form.UserEditForm;
 import com.example.moattravel3.repository.RoleRepository;
 import com.example.moattravel3.repository.UserRepository;
 
@@ -35,10 +36,24 @@ public class UserService {
 		user.setEmail(signupForm.getEmail());
 		user.setPassword(passwordEncoder.encode(signupForm.getPassword()));
 		user.setRole(role);
-		user.setEnabled(true);
+		user.setEnabled(false);
 
 		return userRepository.save(user);
 	}
+	
+	@Transactional
+    public void update(UserEditForm userEditForm) {
+        User user = userRepository.getReferenceById(userEditForm.getId());
+        
+        user.setName(userEditForm.getName());
+        user.setFurigana(userEditForm.getFurigana());
+        user.setPostalCode(userEditForm.getPostalCode());
+        user.setAddress(userEditForm.getAddress());
+        user.setPhoneNumber(userEditForm.getPhoneNumber());
+        user.setEmail(userEditForm.getEmail());      
+        
+        userRepository.save(user);
+    } 
 
 	// メールアドレスが登録済みかどうかをチェックする
 	public boolean isEmailRegistered(String email) {
@@ -56,6 +71,11 @@ public class UserService {
 	public void enableUser(User user) {
 		user.setEnabled(true);
 		userRepository.save(user);
-
 	}
+	
+    // メールアドレスが変更されたかどうかをチェックする
+    public boolean isEmailChanged(UserEditForm userEditForm) {
+        User currentUser = userRepository.getReferenceById(userEditForm.getId());
+        return !userEditForm.getEmail().equals(currentUser.getEmail());      
+    }  
 }
