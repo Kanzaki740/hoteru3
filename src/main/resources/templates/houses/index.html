@@ -211,9 +211,7 @@
 								<ul class="pagination">
 									<li class="page-item">
 										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
-										<a th:unless="${housePage.isFirst()}"
-											th:href="@{/houses(page = ${housePage.getNumber() - 1}, keyword = ${keyword}, area = ${area}, price = ${price})}"
-											class="page-link moattravel3-page-link">前</a>
+
 										<a th:unless="${housePage.isFirst()}"
 											th:href="@{/houses(page = ${housePage.getNumber() - 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
 											class="page-link moattravel3-page-link">前</a>
@@ -222,18 +220,14 @@
 										class="page-item">
 										<span th:if="${i == housePage.getNumber()}"
 											class="page-link active moattravel3-active" th:text="${i + 1}"></span>
-										<a th:unless="${i == housePage.getNumber()}"
-											th:href="@{/houses(page = ${i}, keyword = ${keyword}, area = ${area}, price = ${price})}"
-											class="page-link moattravel3-page-link" th:text="${i + 1}"></a>
+
 										<a th:unless="${i == housePage.getNumber()}"
 											th:href="@{/houses(page = ${i}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
 											class="page-link moattravel3-page-link" th:text="${i + 1}"></a>
 									</li>
 									<li class="page-item">
 										<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
-										<a th:unless="${housePage.isLast()}"
-											th:href="@{/houses(page = ${housePage.getNumber() + 1}, keyword = ${keyword}, area = ${area}, price = ${price})}"
-											class="page-link moattravel3-page-link">次</a>
+
 										<a th:unless="${housePage.isLast()}"
 											th:href="@{/houses(page = ${housePage.getNumber() + 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
 											class="page-link moattravel3-page-link">次</a>
