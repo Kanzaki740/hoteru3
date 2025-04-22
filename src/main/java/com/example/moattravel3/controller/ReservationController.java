@@ -1,4 +1,5 @@
 package com.example.moattravel3.controller;
+
 import java.time.LocalDate;
 
 import org.springframework.data.domain.Page;
@@ -9,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,7 +33,8 @@ public class ReservationController {
 	private final HouseRepository houseRepository;
 	private final ReservationService reservationService;
 
-	public ReservationController(ReservationRepository reservationRepository,  HouseRepository houseRepository, ReservationService reservationService) {
+	public ReservationController(ReservationRepository reservationRepository, HouseRepository houseRepository,
+			ReservationService reservationService) {
 		this.reservationRepository = reservationRepository;
 		this.houseRepository = houseRepository;
 		this.reservationService = reservationService;
@@ -50,38 +51,55 @@ public class ReservationController {
 
 		return "reservations/index";
 	}
-	
+
 	@GetMapping("/houses/{id}/reservations/input")
 	public String input(@PathVariable(name = "id") Integer id,
-			@ModelAttribute @Validated ReservationInputForm reservationInputForm,
-			BindingResult bindingResult,
-			RedirectAttributes redirectAttributes,
-			Model model) {
-		House house = houseRepository.getReferenceById(id);
-		Integer numberOfPeople = reservationInputForm.getNumberOfPeople();
-		Integer capacity = house.getCapacity();
-		if (numberOfPeople != null) {
-			if (!reservationService.isWithinCapacity(numberOfPeople, capacity)) {
-				FieldError fieldError = new FieldError(bindingResult.getObjectName(), "numberOfPeople",
-						"宿泊人数が定員を超えています。");
-				bindingResult.addError(fieldError);
-			}
-		}
-		if (bindingResult.hasErrors()) {
-			model.addAttribute("house", house);
-			model.addAttribute("errorMessage", "予約内容に不備があります。");
-			return "houses/show";
-		}
-		redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);
-		return "redirect:/houses/{id}/reservations/confirm";
+	        @ModelAttribute @Validated ReservationInputForm reservationInputForm,
+	        BindingResult bindingResult,
+	        RedirectAttributes redirectAttributes,
+	        Model model) {
+
+	    House house = houseRepository.getReferenceById(id);
+
+	    Integer numberOfPeople = reservationInputForm.getNumberOfPeople();
+	    Integer capacity = house.getCapacity();
+	    if (numberOfPeople != null && !reservationService.isWithinCapacity(numberOfPeople, capacity)) {
+	        bindingResult.rejectValue("numberOfPeople", null, "宿泊人数が定員を超えています。");
+	    }
+
+	    LocalDate checkinDate = null;
+	    LocalDate checkoutDate = null;
+	    boolean dateParseFailed = false;
+
+	    try {
+	        checkinDate = reservationInputForm.getCheckinDate();
+	        checkoutDate = reservationInputForm.getCheckoutDate();
+	    } catch (Exception e) {
+	        bindingResult.rejectValue("fromCheckinDateToCheckoutDate", null,
+	                "チェックイン日とチェックアウト日を正しく選択してください。");
+	        dateParseFailed = true;
+	    }
+
+	    if (!dateParseFailed && (checkinDate == null || checkoutDate == null)) {
+	        bindingResult.rejectValue("fromCheckinDateToCheckoutDate", null,
+	                "チェックイン日とチェックアウト日を正しく選択してください。");
+	    }
+
+	    if (bindingResult.hasErrors()) {
+	        model.addAttribute("house", house);
+	        model.addAttribute("errorMessage", "予約内容に不備があります。");
+	        return "houses/show";
+	    }
+
+	    redirectAttributes.addFlashAttribute("reservationInputForm", reservationInputForm);
+	    return "redirect:/houses/{id}/reservations/confirm";
 	}
-	
+
 	@GetMapping("/houses/{id}/reservations/confirm")
 	public String confirm(@PathVariable(name = "id") Integer id,
 			@ModelAttribute ReservationInputForm reservationInputForm,
 			@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-			Model model)
-	{
+			Model model) {
 		House house = houseRepository.getReferenceById(id);
 		User user = userDetailsImpl.getUser();
 		//チェックイン日とチェックアウト日を取得する
@@ -89,14 +107,16 @@ public class ReservationController {
 		LocalDate checkoutDate = reservationInputForm.getCheckoutDate();
 		// 宿泊料金を計算する
 		Integer price = house.getPrice();
-		Integer amount = reservationService.calculateAmount(checkinDate, checkoutDate, price);
+		//Integer amount = reservationService.calculateAmount(checkinDate, checkoutDate, price);
+		Integer numberOfPeople = reservationInputForm.getNumberOfPeople();
+		Integer amount = reservationService.calculateAmount(checkinDate, checkoutDate, price, numberOfPeople);
 		ReservationRegisterForm reservationRegisterForm = new ReservationRegisterForm(house.getId(), user.getId(),
 				checkinDate.toString(), checkoutDate.toString(), reservationInputForm.getNumberOfPeople(), amount);
 		model.addAttribute("house", house);
 		model.addAttribute("reservationRegisterForm", reservationRegisterForm);
 		return "reservations/confirm";
 	}
-	
+
 	@PostMapping("/houses/{id}/reservations/create")
 	public String create(@ModelAttribute ReservationRegisterForm reservationRegisterForm) {
 		reservationService.create(reservationRegisterForm);

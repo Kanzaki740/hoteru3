@@ -15,13 +15,19 @@ public class ReservationInputForm {
  	private Integer numberOfPeople;
  	// チェックイン日を取得する
  	public LocalDate getCheckinDate() {
-     	String[] checkinDateAndCheckoutDate = getFromCheckinDateToCheckoutDate().split(" から ");
-     	return LocalDate.parse(checkinDateAndCheckoutDate[0]);
+ 		String[] parts = getFromCheckinDateToCheckoutDate().split(" から ");
+ 	    if (parts.length >= 1) {
+ 	        return LocalDate.parse(parts[0]);
+ 	    }
+ 	    return null; 
  	}
  	// チェックアウト日を取得する
  	public LocalDate getCheckoutDate() {
-     	String[] checkinDateAndCheckoutDate = getFromCheckinDateToCheckoutDate().split(" から ");
-     	return LocalDate.parse(checkinDateAndCheckoutDate[1]);
+ 		String[] parts = getFromCheckinDateToCheckoutDate().split(" から ");
+ 	    if (parts.length >= 2) {
+ 	        return LocalDate.parse(parts[1]);
+ 	    }
+ 	    return null;
  	}
 }
 

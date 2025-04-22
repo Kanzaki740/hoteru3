@@ -49,9 +49,20 @@ public class ReservationService {
 	}
 
 	// 宿泊料金を計算する
+	/*
 	public Integer calculateAmount(LocalDate checkinDate, LocalDate checkoutDate, Integer price) {
 		long numberOfNights = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
 		int amount = price * (int) numberOfNights;
 		return amount;
 	}
+	*/
+	public Integer calculateAmount(LocalDate checkinDate, LocalDate checkoutDate, Integer price, Integer numberOfPeople) {
+	    long numberOfNights = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+	    if (numberOfNights <= 0) {
+	        numberOfNights = 1; // 最低1泊保証（任意）
+	    }
+	    int amount = price * (int) numberOfNights * numberOfPeople;
+	    return amount;
+	}
+
 }
