@@ -68,5 +68,4 @@ public class ReservationService {
 	    int amount = price * (int) numberOfNights * numberOfPeople;
 	    return amount;
 	}
-
 }
