@@ -102,11 +102,13 @@
 
 	<!-- フッターの部品化 -->
 	<div th:fragment="footer" th:remove="tag">
+		<a th:href="@{/test/index}" style="text-decoration: none; color: inherit;">
 		<footer>
 			<div class="d-flex justify-content-center align-items-center h-100">
 				<p class="text-center text-muted small mb-0">&copy; Moat Travel All rights reserved.</p>
 			</div>
 		</footer>
+		</a>
 	</div>
 
 	<!-- script要素の部品化 -->

@@ -1,6 +1,8 @@
 package com.example.moattravel3.form;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.moattravel3.validation.ValidImage;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +17,8 @@ public class HouseEditForm {
      
      @NotBlank(message = "民宿名を入力してください。")
      private String name;
-         
+     
+     @ValidImage
      private MultipartFile imageFile;
      
      @NotBlank(message = "説明を入力してください。")
