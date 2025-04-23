@@ -6,7 +6,7 @@
 	<div th:replace="~{fragment :: styles}"></div>
 
 	<title>民宿一覧</title>
-	<link rel="icon" type="image/ico" href="/images/favicon.ico">
+	<div th:replace="~{fragment :: favicon}"></div>
 </head>
 
 <body>
@@ -32,6 +32,7 @@
 								<button type="submit" class="btn text-white shadow-sm moattravel3-btn">検索</button>
 							</div>
 						</form>
+
 
 						<div class="card mb-3">
 							<div class="card-header">
@@ -164,6 +165,11 @@
 										th:selected="${order == 'createdAtDesc' || order == null}">新着順</option>
 									<option value="priceAsc" th:selected="${order == 'priceAsc'}">宿泊料金が安い順</option>
 								</select>
+								<select class="form-select form-select-sm" name="size" onchange="this.form.submit()">
+									<option value="5" th:selected="${size == 5}">5件表示</option>
+									<option value="10" th:selected="${size == 10 || size == null}">10件表示</option>
+									<option value="20" th:selected="${size == 20}">20件表示</option>
+								</select>
 							</form>
 						</div>
 
@@ -213,7 +219,7 @@
 										<span th:if="${housePage.isFirst()}" class="page-link disabled">前</span>
 
 										<a th:unless="${housePage.isFirst()}"
-											th:href="@{/houses(page = ${housePage.getNumber() - 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
+											th:href="@{/houses(page = ${housePage.getNumber() - 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order}, size = ${size})}"
 											class="page-link moattravel3-page-link">前</a>
 									</li>
 									<li th:each="i : ${#numbers.sequence(0, housePage.getTotalPages() - 1)}"
@@ -222,14 +228,14 @@
 											class="page-link active moattravel3-active" th:text="${i + 1}"></span>
 
 										<a th:unless="${i == housePage.getNumber()}"
-											th:href="@{/houses(page = ${i}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
+											th:href="@{/houses(page = ${i}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order}, size = ${size})}"
 											class="page-link moattravel3-page-link" th:text="${i + 1}"></a>
 									</li>
 									<li class="page-item">
 										<span th:if="${housePage.isLast()}" class="page-link disabled">次</span>
 
 										<a th:unless="${housePage.isLast()}"
-											th:href="@{/houses(page = ${housePage.getNumber() + 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order})}"
+											th:href="@{/houses(page = ${housePage.getNumber() + 1}, keyword = ${keyword}, area = ${area}, price = ${price}, order = ${order}, size = ${size})}"
 											class="page-link moattravel3-page-link">次</a>
 									</li>
 								</ul>

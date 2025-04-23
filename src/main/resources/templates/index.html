@@ -6,7 +6,7 @@
 	<div th:replace="~{fragment :: styles}"></div>
 
 	<title>Moat Travel</title>
-	<link rel="icon" type="image/ico" href="/images/favicon.ico">
+	<div th:replace="~{fragment :: favicon}"></div>
 </head>
 
 <body>
@@ -26,7 +26,7 @@
 				<div th:if="${successMessage}" class="alert alert-info">
 					<span th:text="${successMessage}"></span>
 				</div>
-				<div class="d-flex justify-content-center">
+				<div class="d-flex justify-content-center gap-2">
 					<form method="get" th:action="@{/houses}" class="mb-5 moattravel3-search-form">
 						<div class="input-group">
 							<input type="text" class="form-control" name="keyword" th:value="${keyword}"
@@ -34,12 +34,14 @@
 							<button type="submit" class="btn text-white shadow-sm moattravel3-btn">検索</button>
 						</div>
 					</form>
+					<a th:href="@{/houses}"
+						class="btn text-white shadow-sm moattravel3-btn d-inline-flex align-items-center justify-content-center same-height-button">民宿一覧へ</a>
 				</div>
 
 				<h2 class="text-center mb-3">新着</h2>
 				<div class="row row-cols-lg-5 row-cols-2 g-3 mb-5">
 					<div class="col" th:each="newHouse : ${newHouses}">
-						<a th:href="@{/houses/__${newHouse.getId()}__}" class="link-dark moattravel-card-link">
+						<a th:href="@{/houses/__${newHouse.getId()}__}" class="link-dark moattravel3-card-link">
 							<div class="card h-100">
 								<img th:if="${newHouse.getImageName()}"
 									th:src="@{/storage/__${newHouse.getImageName()}__}"

@@ -59,6 +59,14 @@ footer {
 	opacity: 0.8;
 }
 
+ /* 検索窓の高さに合わせる */
+.same-height-button {
+  height: 33px;
+  line-height: 1;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .moattravel3-page-link {
 	color: #5196a6;
 }
