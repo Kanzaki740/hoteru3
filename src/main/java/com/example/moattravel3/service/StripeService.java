@@ -24,7 +24,9 @@ public class StripeService {
 	private final ReservationService reservationService;
 
 	public StripeService(ReservationService reservationService) {
+		
 		this.reservationService = reservationService;
+		
 	}
 
 	// セッションを作成し、Stripeに必要な情報を返す
@@ -71,20 +73,49 @@ public class StripeService {
 	}
 
 	// セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する
-	//test
 	public void processSessionCompleted(Event event) {
+		
+		System.out.println("処理開始：checkout.session.completed");
+		
 		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
-		optionalStripeObject.ifPresent(stripeObject -> {
-			Session session = (Session) stripeObject;
+		
+		String sessionId = null;
+		if (optionalStripeObject.isPresent()) {
+			System.out.println("デシリアライズ成功：Session情報を取得しました");
+			Session session = (Session) optionalStripeObject.get();
+			sessionId = session.getId();
+		} else {
+			System.out.println("デシリアライズ失敗：Session情報が空です");
+			// セッションIDをJSONから手動で取り出す
+			String rawJson = event.getDataObjectDeserializer().getRawJson();
+			System.out.println("RAW JSON: " + rawJson);
+
+			// JSONから "id" を抽出
+			int idIndex = rawJson.indexOf("\"id\":\"");
+			if (idIndex != -1) {
+				int start = idIndex + 6;
+				int end = rawJson.indexOf("\"", start);
+				sessionId = rawJson.substring(start, end);
+				System.out.println("抽出されたセッションID: " + sessionId);
+			}
+		}
+
+		if (sessionId != null) {
+			System.out.println("デシリアライズ失敗：Session情報が空です");
 			SessionRetrieveParams params = SessionRetrieveParams.builder().addExpand("payment_intent").build();
 
 			try {
-				session = Session.retrieve(session.getId(), params, null);
-				Map<String, String> paymentIntentObject = session.getPaymentIntentObject().getMetadata();
-				reservationService.create(paymentIntentObject);
+				Stripe.apiKey = stripeApiKey;
+				Session session = Session.retrieve(sessionId, params, null);
+				Map<String, String> metadata = session.getPaymentIntentObject().getMetadata();
+				System.out.println("取得したメタデータ: " + metadata);
+
+				reservationService.create(metadata);
 			} catch (StripeException e) {
+				System.err.println("セッション再取得エラー");
 				e.printStackTrace();
 			}
-		});
+		}
+
 	}
 }

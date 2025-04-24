@@ -2,6 +2,7 @@ package com.example.moattravel3.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,12 +15,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.authorizeHttpRequests((requests) -> requests
+						.requestMatchers(HttpMethod.POST, "/stripe/webhook").permitAll()
 						.requestMatchers("/css/**", "/images/**", "/js/**", "/storage/**", "/", "/signup/**", "/houses",
-								"/houses/{id}", "/stripe/webhook", "/test/**", "/test")
+								"/houses/{id}", "/test/**", "/test")
 						.permitAll()
 						// すべてのユーザーにアクセスを許可するURL           
 						.requestMatchers("/admin/**").hasRole("ADMIN") // 管理者にのみアクセスを許可するURL
@@ -33,7 +36,11 @@ public class WebSecurityConfig {
 						.permitAll())
 				.logout((logout) -> logout
 						.logoutSuccessUrl("/?loggedOut") // ログアウト時のリダイレクト先URL
-						.permitAll());
+						.permitAll())
+				.csrf(csrf -> csrf
+						.ignoringRequestMatchers("/stripe/webhook") //CSRF保護を無効
+				);
+		
 
 		return http.build();
 	}
