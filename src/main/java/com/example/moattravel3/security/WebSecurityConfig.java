@@ -41,6 +41,7 @@ public class WebSecurityConfig {
 						.ignoringRequestMatchers("/stripe/webhook") //CSRF保護を無効
 				);
 		
+		
 
 		return http.build();
 	}

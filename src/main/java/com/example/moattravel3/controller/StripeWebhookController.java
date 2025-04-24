@@ -48,10 +48,11 @@ public class StripeWebhookController {
 
 		return new ResponseEntity<>("Success", HttpStatus.OK);
 	}
-	
+
+	//テスト
 	@GetMapping("/stripe/test")
 	public ResponseEntity<String> test() {
-	    System.out.println("★ /stripe/test が呼ばれました");
-	    return ResponseEntity.ok("ok");
+		System.out.println("★ /stripe/test 呼び出し");
+		return ResponseEntity.ok("ok");
 	}
 }

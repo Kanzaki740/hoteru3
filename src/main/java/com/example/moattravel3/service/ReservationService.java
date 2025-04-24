@@ -32,8 +32,8 @@ public class ReservationService {
 		Reservation reservation = new Reservation();
 		Integer houseId = Integer.valueOf(paymentIntentObject.get("houseId"));
 		Integer userId = Integer.valueOf(paymentIntentObject.get("userId"));
-		House house = houseRepository.getReferenceById(houseId);       
-        User user = userRepository.getReferenceById(userId);
+		House house = houseRepository.getReferenceById(houseId);
+		User user = userRepository.getReferenceById(userId);
 		LocalDate checkinDate = LocalDate.parse(paymentIntentObject.get("checkinDate"));
 		LocalDate checkoutDate = LocalDate.parse(paymentIntentObject.get("checkoutDate"));
 		Integer numberOfPeople = Integer.valueOf(paymentIntentObject.get("numberOfPeople"));
@@ -43,7 +43,7 @@ public class ReservationService {
 		reservation.setCheckinDate(checkinDate);
 		reservation.setCheckoutDate(checkoutDate);
 		reservation.setNumberOfPeople(numberOfPeople);
-        reservation.setAmount(amount);
+		reservation.setAmount(amount);
 		reservationRepository.save(reservation);
 	}
 
@@ -60,12 +60,13 @@ public class ReservationService {
 		return amount;
 	}
 	*/
-	public Integer calculateAmount(LocalDate checkinDate, LocalDate checkoutDate, Integer price, Integer numberOfPeople) {
-	    long numberOfNights = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
-	    if (numberOfNights <= 0) {
-	        numberOfNights = 1; // 最低1泊保証（任意）
-	    }
-	    int amount = price * (int) numberOfNights * numberOfPeople;
-	    return amount;
+	public Integer calculateAmount(LocalDate checkinDate, LocalDate checkoutDate, Integer price,
+			Integer numberOfPeople) {
+		long numberOfNights = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+		if (numberOfNights <= 0) {
+			numberOfNights = 1; // 最低1泊保証（任意）
+		}
+		int amount = price * (int) numberOfNights * numberOfPeople;
+		return amount;
 	}
 }

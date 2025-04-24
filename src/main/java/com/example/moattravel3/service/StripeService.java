@@ -3,10 +3,15 @@ package com.example.moattravel3.service;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.example.moattravel3.entity.House;
+import com.example.moattravel3.entity.User;
 import com.example.moattravel3.form.ReservationRegisterForm;
+import com.example.moattravel3.repository.HouseRepository;
+import com.example.moattravel3.repository.UserRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -16,6 +21,7 @@ import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 @Service
 public class StripeService {
@@ -23,10 +29,19 @@ public class StripeService {
 	private String stripeApiKey;
 	private final ReservationService reservationService;
 
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private HouseRepository houseRepository;
+
+	@Autowired
+	private MailService mailService;
+
 	public StripeService(ReservationService reservationService) {
-		
+
 		this.reservationService = reservationService;
-		
+
 	}
 
 	// セッションを作成し、Stripeに必要な情報を返す
@@ -73,12 +88,13 @@ public class StripeService {
 	}
 
 	// セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する
+	@Transactional
 	public void processSessionCompleted(Event event) {
-		
+
 		System.out.println("処理開始：checkout.session.completed");
-		
+
 		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
-		
+
 		String sessionId = null;
 		if (optionalStripeObject.isPresent()) {
 			System.out.println("デシリアライズ成功：Session情報を取得しました");
@@ -111,6 +127,36 @@ public class StripeService {
 				System.out.println("取得したメタデータ: " + metadata);
 
 				reservationService.create(metadata);
+
+				//予約完了メールを送信
+				Integer houseId = Integer.parseInt(metadata.get("houseId"));
+				Integer userId = Integer.parseInt(metadata.get("userId"));
+				Integer numberOfPeople = Integer.parseInt(metadata.get("numberOfPeople"));
+				Integer amount = Integer.parseInt(metadata.get("amount"));
+				String checkinDate = metadata.get("checkinDate");
+				String checkoutDate = metadata.get("checkoutDate");
+
+				User user = userRepository.getReferenceById(userId);
+				House house = houseRepository.getReferenceById(houseId);
+
+				String subject = "【Moat Travel】予約が完了しました";
+				String body = String.format("""
+						%s 様
+
+						以下の内容でご予約が完了しました：
+
+						■ 宿泊施設：%s
+						■ 宿泊日：%s ～ %s
+						■ 宿泊人数：%d名
+						■ 合計金額：%,d円
+
+						Moat Travelをご利用いただきありがとうございます。
+						～連絡先とか～
+						""",
+						user.getName(), house.getName(), checkinDate, checkoutDate, numberOfPeople, amount);
+
+				mailService.sendReservationConfirmation(user.getEmail(), subject, body);
+				System.out.println("予約完了メールを送信しました。");
 			} catch (StripeException e) {
 				System.err.println("セッション再取得エラー");
 				e.printStackTrace();
