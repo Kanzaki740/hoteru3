@@ -28,7 +28,7 @@
 						<form method="get" th:action="@{/houses}" class="w-100 mb-3">
 							<div class="input-group">
 								<input type="text" class="form-control" name="keyword" th:value="${keyword}"
-									placeholder="民宿名・目的地">
+									placeholder="民宿名・目的地・詳細">
 								<button type="submit" class="btn text-white shadow-sm moattravel3-btn">検索</button>
 							</div>
 						</form>
@@ -54,7 +54,7 @@
 												<option value="山形県" th:selected="${area == '山形県'}">山形県</option>
 												<option value="福島県" th:selected="${area == '福島県'}">福島県</option>
 											</optgroup>
-											<optgroup label="北関東">
+											<optgroup lavel="北関東">
 												<option value="茨城県" th:selected="${area == '茨城県'}">茨城県</option>
 												<option value="栃木県" th:selected="${area == '栃木県'}">栃木県</option>
 												<option value="群馬県" th:selected="${area == '群馬県'}">群馬県</option>

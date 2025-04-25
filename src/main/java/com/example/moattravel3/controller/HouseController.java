@@ -38,12 +38,15 @@ public class HouseController {
 		Page<House> housePage;
 
 		if (keyword != null && !keyword.isEmpty()) {
-			housePage = houseRepository.findByNameLikeOrAddressLike("%" + keyword + "%", "%" + keyword + "%", customPageable);
+			String kw = "%" + keyword + "%";
+			housePage = houseRepository.findByNameLikeOrAddressLike(kw, kw, customPageable);
 			if (order != null && order.equals("priceAsc")) {
-                housePage = houseRepository.findByNameLikeOrAddressLikeOrderByPriceAsc("%" + keyword + "%", "%" + keyword + "%", customPageable);
-            } else {
-                housePage = houseRepository.findByNameLikeOrAddressLikeOrderByCreatedAtDesc("%" + keyword + "%", "%" + keyword + "%", customPageable);
-            }
+		        housePage = houseRepository
+		            .findByNameLikeOrAddressLikeOrDescriptionLikeOrderByPriceAsc(kw, kw, kw, customPageable);
+		    } else {
+		        housePage = houseRepository
+		            .findByNameLikeOrAddressLikeOrDescriptionLikeOrderByCreatedAtDesc(kw, kw, kw, customPageable);
+		    }
 		} else if (area != null && !area.isEmpty()) {
 			housePage = houseRepository.findByAddressLike("%" + area + "%", customPageable);
 			if (order != null && order.equals("priceAsc")) {

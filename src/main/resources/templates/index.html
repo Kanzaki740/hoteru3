@@ -12,7 +12,6 @@
 <body>
 	<div class="moattravel3-wrapper">
 		<!-- ヘッダー -->
-		<!-- ああああああああああああああああああああああああああああああああああああああああああああああ -->
 		<div th:replace="~{fragment :: header}"></div>
 
 		<main>
@@ -31,7 +30,7 @@
 					<form method="get" th:action="@{/houses}" class="mb-5 moattravel3-search-form">
 						<div class="input-group">
 							<input type="text" class="form-control" name="keyword" th:value="${keyword}"
-								placeholder="民宿名・目的地">
+								placeholder="民宿名・目的地・詳細">
 							<button type="submit" class="btn text-white shadow-sm moattravel3-btn">検索</button>
 						</div>
 					</form>
