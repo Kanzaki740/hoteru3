@@ -34,6 +34,7 @@
 							</div>
 						</div>
 
+
 						<div th:if="${successMessage}" class="alert alert-info">
 							<span th:text="${successMessage}"></span>
 						</div>
@@ -98,6 +99,11 @@
 									<span th:text="${user.getEmail()}"></span>
 								</div>
 							</div>
+
+							<form th:action="@{/user/withdraw}" method="post" onsubmit="return confirm('本当に退会しますか？');">
+								<button type="submit" class="btn btn-outline-danger w-100">退会する</button>
+							</form>
+
 						</div>
 					</div>
 				</div>

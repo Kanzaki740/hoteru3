@@ -25,18 +25,28 @@ public class AdminUserController {
 
 	@GetMapping
 	public String index(@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(required = false, defaultValue = "false") boolean showDisabled,
 			@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable,
 			Model model) {
 		Page<User> userPage;
 
 		if (keyword != null && !keyword.isEmpty()) {
-			userPage = userRepository.findByNameLikeOrFuriganaLike("%" + keyword + "%", "%" + keyword + "%", pageable);
-		} else {
-			userPage = userRepository.findAll(pageable);
-		}
+		    if (showDisabled) {
+		        userPage = userRepository.findByNameOrFuriganaContaining(keyword, pageable);
+		    } else {
+		        userPage = userRepository.findByNameOrFuriganaContainingAndEnabledTrue(keyword, pageable);
+		    }
+		}else {
+	        if (showDisabled) {
+	            userPage = userRepository.findAll(pageable);
+	        } else {
+	            userPage = userRepository.findByEnabledTrue(pageable);
+	        }
+	    }
 
 		model.addAttribute("userPage", userPage);
 		model.addAttribute("keyword", keyword);
+		model.addAttribute("showDisabled", showDisabled);
 
 		return "admin/users/index";
 	}

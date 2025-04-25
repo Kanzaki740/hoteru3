@@ -13,7 +13,7 @@ public class MailService {
 
     public void sendReservationConfirmation(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("your-email@gmail.com"); // 差出人アドレス
+        message.setFrom("futo1106pocket@gmail.com"); // 差出人アドレス
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);

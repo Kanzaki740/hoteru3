@@ -1,5 +1,6 @@
 package com.example.moattravel3.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,7 @@ import com.example.moattravel3.entity.User;
 import com.example.moattravel3.entity.VerificationToken;
 import com.example.moattravel3.event.SignupEventPublisher;
 import com.example.moattravel3.form.SignupForm;
+import com.example.moattravel3.security.UserDetailsImpl;
 import com.example.moattravel3.service.UserService;
 import com.example.moattravel3.service.VerificationTokenService;
 
@@ -26,8 +28,8 @@ public class AuthController {
 	private final SignupEventPublisher signupEventPublisher;
 	private final VerificationTokenService verificationTokenService;
 
-
-	public AuthController(UserService userService, SignupEventPublisher signupEventPublisher, VerificationTokenService verificationTokenService) {
+	public AuthController(UserService userService, SignupEventPublisher signupEventPublisher,
+			VerificationTokenService verificationTokenService) {
 		this.userService = userService;
 		this.signupEventPublisher = signupEventPublisher;
 		this.verificationTokenService = verificationTokenService;
@@ -73,22 +75,31 @@ public class AuthController {
 
 		return "redirect:/";
 	}
-	
-	 @GetMapping("/signup/verify")
-     public String verify(@RequestParam(name = "token") String token, Model model) {
-         VerificationToken verificationToken = verificationTokenService.getVerificationToken(token);
-         
-         if (verificationToken != null) {
-             User user = verificationToken.getUser();  
-             userService.enableUser(user);
-             String successMessage = "会員登録が完了しました。";
-             model.addAttribute("successMessage", successMessage);            
-         } else {
-             String errorMessage = "トークンが無効です。";
-             model.addAttribute("errorMessage", errorMessage);
-         }
-         
-         return "auth/verify";         
-     }    
+
+	@GetMapping("/signup/verify")
+	public String verify(@RequestParam(name = "token") String token, Model model) {
+		VerificationToken verificationToken = verificationTokenService.getVerificationToken(token);
+
+		if (verificationToken != null) {
+			User user = verificationToken.getUser();
+			userService.enableUser(user);
+			String successMessage = "会員登録が完了しました。";
+			model.addAttribute("successMessage", successMessage);
+		} else {
+			String errorMessage = "トークンが無効です。";
+			model.addAttribute("errorMessage", errorMessage);
+		}
+
+		return "auth/verify";
+	}
+
+	@PostMapping("/user/withdraw")
+	public String withdraw(RedirectAttributes redirectAttributes, Authentication authentication) {
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		User user = userDetails.getUser();
+		userService.withdrawUser(user.getId());
+		redirectAttributes.addFlashAttribute("successMessage", "退会処理が完了しました。");
+		return "redirect:/?loggedout"; // セッション終了
+	}
 
 }

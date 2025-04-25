@@ -40,20 +40,20 @@ public class UserService {
 
 		return userRepository.save(user);
 	}
-	
+
 	@Transactional
-    public void update(UserEditForm userEditForm) {
-        User user = userRepository.getReferenceById(userEditForm.getId());
-        
-        user.setName(userEditForm.getName());
-        user.setFurigana(userEditForm.getFurigana());
-        user.setPostalCode(userEditForm.getPostalCode());
-        user.setAddress(userEditForm.getAddress());
-        user.setPhoneNumber(userEditForm.getPhoneNumber());
-        user.setEmail(userEditForm.getEmail());      
-        
-        userRepository.save(user);
-    } 
+	public void update(UserEditForm userEditForm) {
+		User user = userRepository.getReferenceById(userEditForm.getId());
+
+		user.setName(userEditForm.getName());
+		user.setFurigana(userEditForm.getFurigana());
+		user.setPostalCode(userEditForm.getPostalCode());
+		user.setAddress(userEditForm.getAddress());
+		user.setPhoneNumber(userEditForm.getPhoneNumber());
+		user.setEmail(userEditForm.getEmail());
+
+		userRepository.save(user);
+	}
 
 	// メールアドレスが登録済みかどうかをチェックする
 	public boolean isEmailRegistered(String email) {
@@ -72,10 +72,18 @@ public class UserService {
 		user.setEnabled(true);
 		userRepository.save(user);
 	}
-	
-    // メールアドレスが変更されたかどうかをチェックする
-    public boolean isEmailChanged(UserEditForm userEditForm) {
-        User currentUser = userRepository.getReferenceById(userEditForm.getId());
-        return !userEditForm.getEmail().equals(currentUser.getEmail());      
-    }  
+
+	// メールアドレスが変更されたかどうかをチェックする
+	public boolean isEmailChanged(UserEditForm userEditForm) {
+		User currentUser = userRepository.getReferenceById(userEditForm.getId());
+		return !userEditForm.getEmail().equals(currentUser.getEmail());
+	}
+
+	//ユーザーを無効にする
+	@Transactional
+	public void withdrawUser(Integer userId) {
+		User user = userRepository.getReferenceById(userId);
+		user.setEnabled(false); // 論理削除
+		userRepository.save(user);
+	}
 }

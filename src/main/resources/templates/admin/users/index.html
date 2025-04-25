@@ -27,6 +27,10 @@
 								<div class="input-group">
 									<input type="text" class="form-control" name="keyword" th:value="${keyword}"
 										placeholder="氏名・フリガナ">
+									<div class="input-group-text">
+										<input type="checkbox" name="showDisabled" value="true"
+											th:checked="${showDisabled}"> 無効も表示
+									</div>
 									<button type="submit" class="btn text-white shadow-sm moattravel3-btn">検索</button>
 								</div>
 							</form>
@@ -43,6 +47,7 @@
 									<th scope="col">氏名</th>
 									<th scope="col">フリガナ</th>
 									<th scope="col">メールアドレス</th>
+									<th scope="col">ステータス</th>
 									<th scope="col"></th>
 								</tr>
 							</thead>
@@ -52,6 +57,7 @@
 									<td th:text="${user.getName()}"></td>
 									<td th:text="${user.getFurigana()}"></td>
 									<td th:text="${user.getEmail()}"></td>
+									<td th:text="${user.getEnabled()}"></td>
 									<td><a th:href="@{/admin/users/__${user.getId()}__}">詳細</a></td>
 								</tr>
 							</tbody>
@@ -64,7 +70,7 @@
 									<li class="page-item">
 										<span th:if="${userPage.isFirst()}" class="page-link disabled">前</span>
 										<a th:unless="${userPage.isFirst()}"
-											th:href="@{/admin/users(page = ${userPage.getNumber() - 1}, keyword = ${keyword})}"
+											th:href="@{/admin/users(page = ${userPage.getNumber() - 1}, keyword = ${keyword}, showDisabled = ${showDisabled})}"
 											class="page-link moattravel3-page-link">前</a>
 									</li>
 									<li th:each="i : ${#numbers.sequence(0, userPage.getTotalPages() - 1)}"
@@ -72,13 +78,13 @@
 										<span th:if="${i == userPage.getNumber()}"
 											class="page-link active moattravel3-active" th:text="${i + 1}"></span>
 										<a th:unless="${i == userPage.getNumber()}"
-											th:href="@{/admin/users(page = ${i}, keyword = ${keyword})}"
+											th:href="@{/admin/users(page = ${i}, keyword = ${keyword}, showDisabled = ${showDisabled})}"
 											class="page-link moattravel3-page-link" th:text="${i + 1}"></a>
 									</li>
 									<li class="page-item">
 										<span th:if="${userPage.isLast()}" class="page-link disabled">次</span>
 										<a th:unless="${userPage.isLast()}"
-											th:href="@{/admin/users(page = ${userPage.getNumber() + 1}, keyword = ${keyword})}"
+											th:href="@{/admin/users(page = ${userPage.getNumber() + 1}, keyword = ${keyword}, showDisabled = ${showDisabled})}"
 											class="page-link moattravel3-page-link">次</a>
 									</li>
 								</ul>
