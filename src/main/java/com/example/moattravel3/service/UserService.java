@@ -10,35 +10,64 @@ import com.example.moattravel3.form.SignupForm;
 import com.example.moattravel3.form.UserEditForm;
 import com.example.moattravel3.repository.RoleRepository;
 import com.example.moattravel3.repository.UserRepository;
+import com.example.moattravel3.repository.VerificationTokenRepository;
 
 @Service
 public class UserService {
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final VerificationTokenRepository verificationTokenRepository;
 
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
+			VerificationTokenRepository verificationTokenRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.verificationTokenRepository = verificationTokenRepository;
 	}
 
 	@Transactional
 	public User create(SignupForm signupForm) {
 		User user = new User();
+		User existingUser = userRepository.findByEmail(signupForm.getEmail());
 		Role role = roleRepository.findByName("ROLE_GENERAL");
 
-		user.setName(signupForm.getName());
-		user.setFurigana(signupForm.getFurigana());
-		user.setPostalCode(signupForm.getPostalCode());
-		user.setAddress(signupForm.getAddress());
-		user.setPhoneNumber(signupForm.getPhoneNumber());
-		user.setEmail(signupForm.getEmail());
-		user.setPassword(passwordEncoder.encode(signupForm.getPassword()));
-		user.setRole(role);
-		user.setEnabled(false);
+		if (existingUser != null) {
+			if (existingUser.getEnabled()) {
+				// 有効なユーザーなら新規登録NG
+				throw new IllegalStateException("すでに登録済みのメールアドレスです。");
+			} else {
+				// 無効なユーザーを上書きして再利用する
+				existingUser.setName(signupForm.getName());
+				existingUser.setFurigana(signupForm.getFurigana());
+				existingUser.setPostalCode(signupForm.getPostalCode());
+				existingUser.setAddress(signupForm.getAddress());
+				existingUser.setPhoneNumber(signupForm.getPhoneNumber());
+				existingUser.setPassword(passwordEncoder.encode(signupForm.getPassword()));
+				existingUser.setEnabled(false);
 
-		return userRepository.save(user);
+				User savedUser = userRepository.save(existingUser);
+
+				// 古いVerificationTokenを削除する
+				verificationTokenRepository.deleteByUser(savedUser);
+
+				return savedUser;
+			}
+		} else {
+			// 新規ユーザー登録
+			user.setName(signupForm.getName());
+			user.setFurigana(signupForm.getFurigana());
+			user.setPostalCode(signupForm.getPostalCode());
+			user.setAddress(signupForm.getAddress());
+			user.setPhoneNumber(signupForm.getPhoneNumber());
+			user.setEmail(signupForm.getEmail());
+			user.setPassword(passwordEncoder.encode(signupForm.getPassword()));
+			user.setRole(role);
+			user.setEnabled(false);
+
+			return userRepository.save(user);
+		}
 	}
 
 	@Transactional
@@ -86,4 +115,10 @@ public class UserService {
 		user.setEnabled(false); // 論理削除
 		userRepository.save(user);
 	}
+
+	//メール再送用
+	public User findByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
+
 }

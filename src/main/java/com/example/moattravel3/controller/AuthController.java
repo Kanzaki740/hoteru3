@@ -64,6 +64,16 @@ public class AuthController {
 		if (bindingResult.hasErrors()) {
 			return "auth/signup";
 		}
+		
+		try {
+	        userService.create(signupForm);
+	    } catch (IllegalStateException e) {
+	        bindingResult.rejectValue("email", "signup.email", e.getMessage());
+	    }
+
+	    if (bindingResult.hasErrors()) {
+	        return "signup"; // フォーム画面に戻す
+	    }
 
 		//userService.create(signupForm);
 		redirectAttributes.addFlashAttribute("successMessage", "会員登録が完了しました。");
@@ -75,6 +85,24 @@ public class AuthController {
 
 		return "redirect:/";
 	}
+	
+	//認証メールの再送
+	@PostMapping("/signup/resend")
+	public String resendVerificationEmail(@RequestParam String email, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+	    User user = userService.findByEmail(email);
+
+	    if (user != null && !user.getEnabled()) {
+	        String requestUrl = request.getRequestURL().toString();
+	        signupEventPublisher.publishSignupEvent(user, requestUrl);
+
+	        redirectAttributes.addFlashAttribute("successMessage", "認証メールを再送しました。メールをご確認ください。");
+	    } else {
+	        redirectAttributes.addFlashAttribute("errorMessage", "認証済みのアカウント、または存在しないメールアドレスです。");
+	    }
+
+	    return "redirect:/";
+	}
+
 
 	@GetMapping("/signup/verify")
 	public String verify(@RequestParam(name = "token") String token, Model model) {
@@ -99,7 +127,7 @@ public class AuthController {
 		User user = userDetails.getUser();
 		userService.withdrawUser(user.getId());
 		redirectAttributes.addFlashAttribute("successMessage", "退会処理が完了しました。");
-		return "redirect:/?loggedout"; // セッション終了
+		return "redirect:/?loggedout";
 	}
 
 }
