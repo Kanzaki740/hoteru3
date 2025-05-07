@@ -104,9 +104,20 @@
 								</div>
 
 								<div class="col">
-									<span th:text="${user.getEnabled()}"></span>
+									<span th:text="${user.getEnabled()} ? '有効' : '無効'"
+										th:style="${user.getEnabled()} ? 'color: green;' : 'color: red;'"></span>
 								</div>
 							</div>
+							<div class="text-center">
+								<form th:action="@{/admin/users/__${user.getId()}__/toggle}" method="post">
+									<input type="hidden" name="_method" value="post" />
+									<button type="submit" class="btn"
+										th:classappend="${user.getEnabled()} ? 'btn-danger' : 'btn-success'">
+										<span th:text="${user.getEnabled()} ? '無効にする' : '有効にする'"></span>
+									</button>
+								</form>
+							</div>
+
 						</div>
 					</div>
 				</div>

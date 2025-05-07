@@ -57,7 +57,8 @@
 									<td th:text="${user.getName()}"></td>
 									<td th:text="${user.getFurigana()}"></td>
 									<td th:text="${user.getEmail()}"></td>
-									<td th:text="${user.getEnabled()}"></td>
+									<td th:text="${user.getEnabled()} ? '有効' : '無効'"
+										th:style="${user.getEnabled()} ? 'color: green;' : 'color: red;'"></td>
 									<td><a th:href="@{/admin/users/__${user.getId()}__}">詳細</a></td>
 								</tr>
 							</tbody>

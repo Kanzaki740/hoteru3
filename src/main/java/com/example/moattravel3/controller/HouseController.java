@@ -1,5 +1,7 @@
 package com.example.moattravel3.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,16 +15,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.moattravel3.entity.House;
+import com.example.moattravel3.entity.Review;
 import com.example.moattravel3.form.ReservationInputForm;
 import com.example.moattravel3.repository.HouseRepository;
+import com.example.moattravel3.repository.ReviewRepository;
 
 @Controller
 @RequestMapping("/houses")
 public class HouseController {
 	private final HouseRepository houseRepository;
+	private final ReviewRepository reviewRepository;
 
-	public HouseController(HouseRepository houseRepository) {
+	public HouseController(HouseRepository houseRepository, ReviewRepository reviewRepository) {
 		this.houseRepository = houseRepository;
+		this.reviewRepository = reviewRepository;
 	}
 
 	@GetMapping
@@ -83,9 +89,11 @@ public class HouseController {
 	@GetMapping("/{id}")
     public String show(@PathVariable(name = "id") Integer id, Model model) {
         House house = houseRepository.getReferenceById(id);
+        List<Review> reviews = reviewRepository.findByHouseIdAndIsPublicTrueOrderByCreatedAtDesc(id);
         
         model.addAttribute("house", house);  
         model.addAttribute("reservationInputForm", new ReservationInputForm());
+        model.addAttribute("reviews", reviews);
         
         return "houses/show";
     }

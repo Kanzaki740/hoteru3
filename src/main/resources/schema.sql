@@ -58,4 +58,18 @@ CREATE TABLE IF NOT EXISTS verification_tokens
      FOREIGN KEY (user_id) REFERENCES users (id)
  );
 
+CREATE TABLE IF NOT EXISTS reviews (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    house_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    is_public BOOLEAN NOT NULL DEFAULT TRUE,
+    deleted_at DATETIME DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (house_id) REFERENCES houses(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
  

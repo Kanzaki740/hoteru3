@@ -135,6 +135,16 @@ footer {
 	max-width: 300px;
 }
 
+.review {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: white;
+    border-radius: 8px;
+}
+
+
+
 @media screen and (min-width: 1400px) {
 	.moattravel3-container {
 		max-width: 1200px;

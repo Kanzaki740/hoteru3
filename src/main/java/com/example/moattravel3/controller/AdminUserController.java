@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -31,18 +32,18 @@ public class AdminUserController {
 		Page<User> userPage;
 
 		if (keyword != null && !keyword.isEmpty()) {
-		    if (showDisabled) {
-		        userPage = userRepository.findByNameOrFuriganaContaining(keyword, pageable);
-		    } else {
-		        userPage = userRepository.findByNameOrFuriganaContainingAndEnabledTrue(keyword, pageable);
-		    }
-		}else {
-	        if (showDisabled) {
-	            userPage = userRepository.findAll(pageable);
-	        } else {
-	            userPage = userRepository.findByEnabledTrue(pageable);
-	        }
-	    }
+			if (showDisabled) {
+				userPage = userRepository.findByNameOrFuriganaContaining(keyword, pageable);
+			} else {
+				userPage = userRepository.findByNameOrFuriganaContainingAndEnabledTrue(keyword, pageable);
+			}
+		} else {
+			if (showDisabled) {
+				userPage = userRepository.findAll(pageable);
+			} else {
+				userPage = userRepository.findByEnabledTrue(pageable);
+			}
+		}
 
 		model.addAttribute("userPage", userPage);
 		model.addAttribute("keyword", keyword);
@@ -50,13 +51,23 @@ public class AdminUserController {
 
 		return "admin/users/index";
 	}
-	
+
 	@GetMapping("/{id}")
-    public String show(@PathVariable(name = "id") Integer id, Model model) {
-        User user = userRepository.getReferenceById(id);
-        
-        model.addAttribute("user", user);
-        
-        return "admin/users/show";
-    }  
+	public String show(@PathVariable(name = "id") Integer id, Model model) {
+		User user = userRepository.getReferenceById(id);
+
+		model.addAttribute("user", user);
+
+		return "admin/users/show";
+	}
+	
+	//有効切り替え
+	@PostMapping("/{id}/toggle")
+	public String toggleEnabled(@PathVariable(name = "id") Integer id) {
+	    User user = userRepository.getReferenceById(id);
+	    user.setEnabled(!user.getEnabled()); // 有効/無効を反転
+	    userRepository.save(user);
+	    return "redirect:/admin/users/" + id; // 元の詳細画面に戻る
+	}
+
 }

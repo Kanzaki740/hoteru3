@@ -20,6 +20,10 @@
 		<div th:replace="~{fragment :: header}"></div>
 
 		<main>
+			<div th:if="${successMessage}" class="alert alert-info">
+				<span th:text="${successMessage}"></span>
+			</div>
+
 			<div class="container pt-4 pb-5 moattravel3-container">
 				<div class="row justify-content-center">
 					<div class="col-xxl-9 col-xl-10 col-lg-11">
@@ -163,6 +167,58 @@
 									</div>
 								</div>
 							</div>
+
+							<!-- 投稿されたレビュー -->
+							<div class="review-section review">
+								<h4>レビュー</h4>
+								<div th:if="${#lists.isEmpty(reviews)}">
+									<p>まだレビューは投稿されていません。</p>
+								</div>
+								<div th:each="review : ${reviews}" class="border p-2 my-2">
+									<p><strong th:text="${review.user.name}">ユーザー名</strong> さん（評価:
+										<span th:text="${review.rating}">5</span>/5）
+									</p>
+									<p th:text="${review.comment}">コメント内容</p>
+									<p class="text-muted small"
+										th:text="${#temporals.format(review.createdAt, 'yyyy/MM/dd')}"></p>
+								</div>
+							</div>
+
+
+							<!-- レビュー投稿フォーム -->
+							<div sec:authorize="isAnonymous()">
+								<div class="card">
+									<div class="card-body">
+										<p class="card-text"><a th:href="@{/login}">ログイン</a>してレビューを投稿</p>
+
+									</div>
+								</div>
+							</div>
+
+							<div sec:authorize="isAuthenticated()">
+								<form th:action="@{/reviews}" method="post"
+									class="p-3 border rounded bg-white shadow-sm">
+									<div class="mb-3">
+										<label for="rating" class="form-label">評価（1〜5）</label>
+										<select id="rating" name="rating" class="form-select" required>
+											<option value="">選択してください</option>
+											<option value="1">1 - とても悪い</option>
+											<option value="2">2 - 悪い</option>
+											<option value="3">3 - 普通</option>
+											<option value="4">4 - 良い</option>
+											<option value="5">5 - とても良い</option>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label for="comment" class="form-label">レビュー内容</label>
+										<textarea id="comment" name="comment" rows="4"
+											class="form-control moattravel3-pre-wrap" required></textarea>
+									</div>
+									<input type="hidden" name="houseId" th:value="${house.id}" />
+									<button type="submit" class="btn text-white shadow-sm moattravel3-btn">投稿する</button>
+								</form>
+							</div>
+
 						</div>
 					</div>
 				</div>

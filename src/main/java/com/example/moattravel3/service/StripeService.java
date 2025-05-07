@@ -21,7 +21,6 @@ import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 
 @Service
 public class StripeService {
@@ -47,6 +46,7 @@ public class StripeService {
 	// セッションを作成し、Stripeに必要な情報を返す
 	public String createStripeSession(String houseName, ReservationRegisterForm reservationRegisterForm,
 			HttpServletRequest httpServletRequest) {
+		System.out.println("セッションを作成し、Stripeに必要な情報を返す");
 		Stripe.apiKey = stripeApiKey;
 		String requestUrl = new String(httpServletRequest.getRequestURL());
 		SessionCreateParams params = SessionCreateParams.builder()
@@ -88,7 +88,7 @@ public class StripeService {
 	}
 
 	// セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する
-	@Transactional
+	//@Transactional
 	public void processSessionCompleted(Event event) {
 
 		System.out.println("処理開始：checkout.session.completed");
