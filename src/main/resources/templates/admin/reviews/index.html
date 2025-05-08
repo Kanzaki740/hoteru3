@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<mainhtml xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<head>
+		<div th:replace="~{fragment :: meta}"></div>
+		<div th:replace="~{fragment :: styles}"></div>
+
+		<title>Moat Travel</title>
+		<div th:replace="~{fragment :: favicon}"></div>
+	</head>
+
+	<body>
+		<div class="moattravel3-wrapper">
+
+			<!-- ヘッダー -->
+			<div th:replace="~{fragment :: header}"></div>
+
+			<main>
+
+				<h2>レビュー一覧</h2>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th><a
+									th:href="@{'/admin/reviews?(sortBy='createdAt', direction=${direction == 'asc' ? 'desc' : 'asc'})}">投稿日</a>
+							</th>
+							<th><a
+									th:href="@{'/admin/reviews?(sortBy='house.id', direction=${direction == 'asc' ? 'desc' : 'asc'})}">民宿ID</a>
+							</th>
+							<th><a
+									th:href="@{'/admin/reviews?(sortBy='user.id', direction=${direction == 'asc' ? 'desc' : 'asc'})}">ユーザーID</a>
+							</th>
+							<th>評価</th>
+							<th>内容</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="review : ${reviewPage}">
+							<td th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}"></td>
+							<td th:text="${review.house.id}"></td>
+							<td th:text="${review.user.id}"></td>
+							<td th:text="${review.rating}"></td>
+							<td th:text="${review.comment}"></td>
+						</tr>
+					</tbody>
+				</table>
+		</div>
+	</body>
+
+	</main>
+	<!-- フッター -->
+	<div th:replace="~{fragment :: footer}"></div>
+	</div>
+	<div th:replace="~{fragment :: scripts}"></div>
+
+	</html>
