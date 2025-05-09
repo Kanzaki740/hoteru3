@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<title>レビュー編集</title>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<div th:replace="~{fragment :: favicon}"></div>
+</head>
+
+<body>
+	<div class="moattravel3-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<main>
+			<div class="container moattravel3-container py-5">
+				<h2>レビュー編集</h2>
+
+				<form th:action="@{'/reviews/' + ${review.id} + '/edit'}" method="post">
+					<div class="mb-3">
+						<label for="rating">評価（1〜5）:</label>
+						<select name="rating" id="rating" class="form-select" required>
+							<option th:each="i : ${#numbers.sequence(1,5)}" th:value="${i}" th:text="${i}"
+								th:selected="${review.rating == i}">1</option>
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label for="comment">コメント:</label>
+						<textarea name="comment" id="comment" class="form-control" rows="4" th:text="${review.comment}"
+							required></textarea>
+					</div>
+
+					<button type="submit" class="btn moattravel3-btn">更新する</button>
+				</form>
+			</div>
+		</main>
+
+		<div th:replace="~{fragment :: footer}"></div>
+	</div>
+	<div th:replace="~{fragment :: scripts}"></div>
+</body>
+
+</html>
