@@ -11,4 +11,5 @@ import com.example.moattravel3.entity.Review;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 	List<Review> findByHouseIdAndIsPublicTrueOrderByCreatedAtDesc(Integer houseId);
 	Page<Review> findAll(Pageable pageable);
+	List<Review> findByUserIdOrderByCreatedAtDesc(Integer userId); //ユーザー用レビュー閲覧
 }
